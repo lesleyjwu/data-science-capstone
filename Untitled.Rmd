@@ -1,0 +1,10 @@
+---
+title: "dsc"
+output: html_document
+date: "2023-04-04"
+---
+```{r}
+df<- read_dta('new.dta')
+dim(df)
+```
+
