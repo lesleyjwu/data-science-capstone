@@ -1,0 +1,53 @@
+---
+title: "neural network"
+output: html_document
+date: "2023-04-24"
+---
+
+<https://www.datacamp.com/tutorial/neural-network-models-r>
+
+```{r}
+install.packages(c('neuralnet','keras','tensorflow'),dependencies = T)
+```
+
+```{r}
+library(tidyverse)
+library(neuralnet)
+iris
+
+```
+
+```{r}
+df <- read_csv('proceedHD.csv')
+df <- df %>% mutate_if(is.character, as.factor)
+head(df)
+
+set.seed(245)
+data_rows <- floor(0.80 * nrow(iris))
+train_indices <- sample(c(1:nrow(iris)), data_rows)
+train_data <- df[train_indices,]
+test_data <- df[-train_indices,]
+model = neuralnet(target ~ age + cholesterol+st_depression+sex +chest_pain_type+num_major_vessels,
+                  data=train_data,
+                  hidden=c(6,1),
+                  linear.output = FALSE
+                  )
+plot(model,rep = "best")
+```
+
+```{r}
+pred <- predict(model, test_data)
+labels <- c("setosa", "versicolor", "virginca")
+prediction_label <- data.frame(max.col(pred)) %>%     
+mutate(pred=labels[max.col.pred.]) %>%
+select(2) %>%
+unlist()
+
+table(test_data$Species, prediction_label)
+```
+
+```{r}
+check = as.numeric(test_data$Species) == max.col(pred)
+accuracy = (sum(check)/nrow(test_data))*100
+print(accuracy)
+```
